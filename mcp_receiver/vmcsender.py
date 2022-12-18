@@ -24,11 +24,11 @@ bone_map = [
     "LeftUpperLeg", #19
     "LeftLowerLeg", #20
     "LeftFoot", #21
-    None, #22
+    "LeftToes", #22
     "RightUpperLeg", #23
     "RightLowerLeg", #24
     "RightFoot", #25
-    None #26
+    "RightToes" #26
 ]
 
 class VMCSender(Runner):
