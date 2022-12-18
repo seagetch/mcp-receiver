@@ -46,29 +46,62 @@ If `field1` contains sub-field `field2` and `field3`, length, filed name, and va
 
 ## Data Structure
 Mobile app sends packets which contains following structure.
-Packet contains `head`, `sndf` and `fram` fields, and contains several sub-fields inside.
 
-![fields](field-structure.png)
-### `head` field
+### `skdf` Packet Structure
+`skdf` packet is sent at the beginning of the sequence.
+Packet contains `head`, `sndf` and `skdf` fields, and contains several sub-fields inside.
+
+![fields](skdf-structure.png)
+
+#### `head` field
 `head` field contains information about packet format and version.
 - `ftyp` contains the string which represent the format. Currently, "sony motion format" is used.
 - `vrsn` specifies the version number in 1 byte integer. Currently 1 is used.
 
-### `sndf` field
+#### `sndf` field
 `sndf` field contains the IP addresses and port number information.
 - `ipad` represents the IP address in 8 bytes. Maybe containing sender and receiver.
 - `rcvp` represents the port number of receiver's side. "12351" is used by default.
 
-### `fram` field
+#### `skdf` field
+`skdf` field contains detailed information of the motion.
+- `bons` contains set of bone definition of the avatar.
+
+#### `bons` field
+`bons` field contains set of transformation definitions (`bndt` section.) Currently this section contains 27 transformation defitnion inside.
+
+#### `bndt` field
+`bndt` field contains every individual motion definition.
+- `bnid` specifies Bone ID. Currently 0 to 26 is used.
+  For more details of Bone ID, you can consult [Technical Specification](https://www.sony.net/Products/mocopi-dev/jp/documents/Home/TechSpec.html) of mocopi developer's site.
+- `pbid` Unknown ID.
+- `tran` specifies the transformation parameter values. It seems to contain 7 floating values. 
+
+### `fram` Packet Structure
+`fram` packet is sent continuously after first `skdf` packet is sent.
+Packet contains `head`, `sndf` and `fram` fields, and contains several sub-fields inside.
+
+![fields](fram-structure.png)
+#### `head` field
+`head` field contains information about packet format and version.
+- `ftyp` contains the string which represent the format. Currently, "sony motion format" is used.
+- `vrsn` specifies the version number in 1 byte integer. Currently 1 is used.
+
+#### `sndf` field
+`sndf` field contains the IP addresses and port number information.
+- `ipad` represents the IP address in 8 bytes. Maybe containing sender and receiver.
+- `rcvp` represents the port number of receiver's side. "12351" is used by default.
+
+#### `fram` field
 `fram` field contains detailed information of the motion.
 - `fnum` specifies the frame number in 4 bytes integer.
 - `time` speicifes the time stamp of the motion in 4 bytes integer.
 - `btrs` contains set of transformations of the avatar.
 
-### `btrs` field
+#### `btrs` field
 `btrs` field contains set of transformation definitions (`btdt` section.) Currently this section contains 27 transformation defitnion inside.
 
-## `btdt` field
+#### `btdt` field
 `btdt` field contains every individual motion definition.
 - `bnid` specifies Bone ID. Currently 0 to 26 is used.
   For more details of Bone ID, you can consult [Technical Specification](https://www.sony.net/Products/mocopi-dev/jp/documents/Home/TechSpec.html) of mocopi developer's site.
@@ -78,4 +111,5 @@ Packet contains `head`, `sndf` and `fram` fields, and contains several sub-field
 Not yet done
 
 `tran` field contains 7 floating values.
-Maybe position and quaternion angles, but not confirmed yet.
+By comparing values with BVH files, it seems (rot.x, rot.y, rot.z, rot.w, pos.x, pos.y, pos.z)
+but not confirmed yet.
