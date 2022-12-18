@@ -27,7 +27,7 @@ If user want to send tracking data of multiple player, it should send tracking d
 Mobile app continues to send updated motion to specified port. No interactive communication is required. Just one-way stream from mobile app to computer.
 
 ## Serialization Format
-Data sent from mobile app is serialized special serialization format.
+Data sent from mobile app is serialized in special serialization format.
 Data format is a set of field, which consists of three part, length, field name, and value data.
 Fields are iterated until the end of the packets.
 Values are serialized in little endian.
@@ -40,9 +40,9 @@ Values are serialized in little endian.
 - `value` contains actual data for field. Contents depends on the field name.
 
 ### Nested Field Structure
-Some field have complex structure like in C and other languages. In that kind of complex structure, all data for sub-field is contained in value data of parent field.
+Some field have complex structure like in C and other languages. In that kind of complex structure, all data for sub-field is contained in `value` data of parent field.
 
-If `field1` has sub-field `field2` and `field3`, length, filed name, and value of `field2` and `field3` are packed into `value` of `field1`.
+If `field1` contains sub-field `field2` and `field3`, length, filed name, and value of `field2` and `field3` are packed into `value` data of `field1`.
 
 ## Data Structure
 Mobile app sends packets which contains following structure.
@@ -75,7 +75,7 @@ Packet contains `head`, `sndf` and `fram` fields, and contains several sub-field
 - `tran` specifies the transformation parameter values. It seems to contain 7 floating values. 
 
 ## Bone Transformation Definition
-TBD
+Not yet done
 
 `tran` field contains 7 floating values.
 Maybe position and quaternion angles, but not confirmed yet.
