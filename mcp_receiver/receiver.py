@@ -46,6 +46,9 @@ class Receiver(Runner):
         self.socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.socket.bind((self.addr, self.port))
         while True:
-            message, client_addr = self.socket.recvfrom(2048)
-            data = _process_packet(message)
-            self.queue.put(data)
+            try:
+                message, client_addr = self.socket.recvfrom(2048)
+                data = _process_packet(message)
+                self.queue.put(data)
+            except KeyError as e:
+                print(e)
