@@ -2,7 +2,7 @@ import socket
 import struct
 from mcp_receiver.runner import Runner
 
-data_keys = [b"#", b"head", b"ftyp", b"vrsn", b"sndf", b"ipad", b"rcvp", b"fram", b"fnum", b"time", b"btrs", b"btdt", b"btdt", b"bnid", b"tran"]
+data_keys = [b"#", b"head", b"ftyp", b"vrsn", b"sndf", b"ipad", b"rcvp", b"fram", b"fnum", b"time", b"btrs", b"btdt", b"btdt", b"bnid", b"tran", b"skdf", b"bons", b"bndt", b"pbid"]
 
 def _deserialize(data, index, length, is_list = False):
     result = [] if is_list else {}

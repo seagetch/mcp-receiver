@@ -47,6 +47,7 @@ class VMCSender(Runner):
                 data = self.queue.get()
                 for btdt in data["fram"]["btrs"]:
                     if bone_map[btdt["bnid"]]:
-                        client.send_message("/VMC/Ext/Bone/Pos", [bone_map[btdt["bnid"]]] + btdt["tran"])
+                        tran = btdt["tran"]
+                        client.send_message("/VMC/Ext/Bone/Pos", [bone_map[btdt["bnid"]], tran[4], tran[5], tran[6], tran[0], tran[1], tran[2], tran[3]])
             except KeyError as e:
                 print(e)
