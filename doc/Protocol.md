@@ -74,7 +74,7 @@ Packet contains `head`, `sndf` and `skdf` fields, and contains several sub-field
 `bndt` field contains every individual motion definition.
 - `bnid` specifies Bone ID. Currently 0 to 26 is used.
   For more details of Bone ID, you can consult [Technical Specification](https://www.sony.net/Products/mocopi-dev/jp/documents/Home/TechSpec.html) of mocopi developer's site.
-- `pbid` Unknown ID.
+- `pbid` Parent bone ID. ?
 - `tran` specifies the transformation parameter values. It seems to contain 7 floating values. 
 
 ### `fram` Packet Structure
