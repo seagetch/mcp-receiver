@@ -3,36 +3,36 @@ from mcp_receiver.runner import Runner
 
 bone_map = [
     "Hips", #0
-    None, #1
     "Spine", #2
-    None, #3
-    "Chest", #4
-    None, #5
-    "UpperChest", #6
-    None, #7
-    "Neck", #8
-    None, #9
+    None, #1
+    "Chest", #3
+    None, #4
+    "UpperChest", #5
+    None, #6
+    "-", #7
+    "-", #8
+    "Neck", #9
     "Head", #10
-    "LeftShoulder", #11
-    "LeftUpperArm", #12
-    "LeftLowerArm", #13
-    "LeftHand", #14
-    "RightShoulder", #15
-    "RightUpperArm", #16
-    "RightLowerArm", #17
-    "RightHand", #18
-    "LeftUpperLeg", #19
-    "LeftLowerLeg", #20
-    "LeftFoot", #21
-    "LeftToes", #22
-    "RightUpperLeg", #23
-    "RightLowerLeg", #24
-    "RightFoot", #25
-    "RightToes" #26
+    "RightShoulder", #11
+    "RightUpperArm", #12
+    "RightLowerArm", #13
+    "RightHand", #14
+    "LeftShoulder", #15
+    "LeftUpperArm", #16
+    "LeftLowerArm", #17
+    "LeftHand", #18
+    "RightUpperLeg", #19
+    "RightLowerLeg", #20
+    "RightFoot", #21
+    "RightToes", #22
+    "LeftUpperLeg", #23
+    "LeftLowerLeg", #24
+    "LeftFoot", #25
+    "LeftToes" #26
 ]
 
 class VMCSender(Runner):
-    def __init__(self, host = "localhost", port = 39539):
+    def __init__(self, host = "localhost", port = 39540):
         self.host = host
         self.port = port
 
@@ -44,15 +44,41 @@ class VMCSender(Runner):
         # Main loop
         while True:
             try:
-                bdl_builder = osc_bundle_builder.OscBundleBuilder(osc_bundle_builder.IMMEDIATELY)
                 data = self.queue.get()
                 if "skdf" in data:
-                    pass
+                    msg_builder = osc_message_builder.OscMessageBuilder("/VMC/Ext/Root/Pos")
+                    tran = data["skdf"]["bons"][0]["tran"]
+                    msg_builder.add_arg("root")
+                    msg_builder.add_arg(tran[4])
+                    msg_builder.add_arg(tran[5])
+                    msg_builder.add_arg(tran[6])
+                    msg_builder.add_arg(tran[0])
+                    msg_builder.add_arg(tran[1])
+                    msg_builder.add_arg(tran[2])
+                    msg_builder.add_arg(tran[3])
+                    client.send(msg_builder.build())
                 elif "fram" in data:
+                    bdl_builder = osc_bundle_builder.OscBundleBuilder(osc_bundle_builder.IMMEDIATELY)
+                    skipped_pos = None
+                    skipped_rot = None
                     for btdt in data["fram"]["btrs"]:
+                        if bone_map[btdt["bnid"]] == "-":
+                            pass
                         if bone_map[btdt["bnid"]]:
                             msg_builder = osc_message_builder.OscMessageBuilder("/VMC/Ext/Bone/Pos")
                             tran = btdt["tran"]
+                            if skipped_pos is not None and skipped_rot is not None:
+                                tran = [
+                                    tran[0] * skipped_rot[0],
+                                    tran[1] * skipped_rot[1],
+                                    tran[2] * skipped_rot[2],
+                                    tran[3] * skipped_rot[3],
+                                    tran[4] + skipped_pos[0],
+                                    tran[5] + skipped_pos[1],
+                                    tran[6] + skipped_pos[2]
+                                ]
+                            skipped_pos = None
+                            skipped_rot = None
                             msg_builder.add_arg(bone_map[btdt["bnid"]])
                             msg_builder.add_arg(tran[4])
                             msg_builder.add_arg(tran[5])
@@ -62,6 +88,12 @@ class VMCSender(Runner):
                             msg_builder.add_arg(tran[2])
                             msg_builder.add_arg(tran[3])
                             bdl_builder.add_content(msg_builder.build())
-                client.send(bdl_builder.build())
+                        elif skipped_pos is None:
+                            skipped_pos = [tran[4], tran[5], tran[6]]
+                            skipped_rot = [tran[0], tran[1], tran[2], tran[3]]
+                        else:
+                            skipped_pos = [skipped_pos[0] + tran[4], skipped_pos[1] + tran[5], skipped_pos[2] + tran[6]]
+                            skipped_rot = [skipped_rot[0] * tran[0], skipped_rot[1] * tran[1], skipped_rot[2] * tran[2], skipped_rot[3] * tran[3]]
+                    client.send(bdl_builder.build())
             except KeyError as e:
                 print(e)

@@ -10,7 +10,7 @@ import os.path
 from mcp_receiver.runner import Runner
 
 class DumpServer(Runner):
-    def __init__(self, addr = "localhost", port=39539):
+    def __init__(self, addr = "localhost", port=39540):
         self.addr = addr
         self.port = port
 
@@ -48,10 +48,10 @@ class DummyBVHSender(Runner):
 
 
 q = queue.Queue()
-send = VMCSender()
+send = VMCSender(host="127.17.0.1", port=39540)
 #recv = DummyReceiver()
 #send = ScreenDumper()
-watcher = DumpServer(port=39539)
+#watcher = DumpServer(port=39539)
 if os.path.exists("test/stuff"):
     recv = Receiver()
     bvh = DummyBVHSender()
@@ -59,7 +59,7 @@ else:
     recv = DummyReceiver()
     bvh = None
 
-watcher.run(q)
+#watcher.run(q)
 send.run(q)
 recv.run(q)
 if bvh:
