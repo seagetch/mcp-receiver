@@ -25,7 +25,8 @@ def _deserialize(data, index, length, is_list = False):
     else:
         return result, index
 
-def _process_packet(data):
+def _process_packet(message):
+    data = _deserialize(message, 0, len(message), False)[0]
     data["head"]["ftyp"] = data["head"]["ftyp"].decode()
     data["head"]["vrsn"] = ord(data["head"]["vrsn"])
     data["sndf"]["ipad"] = struct.unpack("@BBBBBBBB", data["sndf"]["ipad"])
