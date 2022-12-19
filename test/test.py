@@ -18,7 +18,7 @@ class DumpServer(Runner):
         while True:
             try:
                 message, client_addr = self.socket.recvfrom(2048)
-                print("Got:", message)
+                print("Got [%d]:"%len(message), message)
             except KeyError as e:
                 print(e)
 

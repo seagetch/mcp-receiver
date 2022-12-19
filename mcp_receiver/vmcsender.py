@@ -1,4 +1,4 @@
-from pythonosc import udp_client
+from pythonosc import udp_client, osc_bundle_builder, osc_message_builder
 from mcp_receiver.runner import Runner
 
 bone_map = [
@@ -37,20 +37,31 @@ class VMCSender(Runner):
         self.port = port
 
     def loop(self):
-        client = udp_client.SimpleUDPClient(self.host, self.port)
+        client = udp_client.UDPClient(self.host, self.port)
         # Do some initialization here
         pass
 
         # Main loop
         while True:
             try:
+                bdl_builder = osc_bundle_builder.OscBundleBuilder(osc_bundle_builder.IMMEDIATELY)
                 data = self.queue.get()
                 if "skdf" in data:
                     pass
                 elif "fram" in data:
                     for btdt in data["fram"]["btrs"]:
                         if bone_map[btdt["bnid"]]:
+                            msg_builder = osc_message_builder.OscMessageBuilder("/VMC/Ext/Bone/Pos")
                             tran = btdt["tran"]
-                            client.send_message("/VMC/Ext/Bone/Pos", [bone_map[btdt["bnid"]], tran[4], tran[5], tran[6], tran[0], tran[1], tran[2], tran[3]])
+                            msg_builder.add_arg(bone_map[btdt["bnid"]])
+                            msg_builder.add_arg(tran[4])
+                            msg_builder.add_arg(tran[5])
+                            msg_builder.add_arg(tran[6])
+                            msg_builder.add_arg(tran[0])
+                            msg_builder.add_arg(tran[1])
+                            msg_builder.add_arg(tran[2])
+                            msg_builder.add_arg(tran[3])
+                            bdl_builder.add_content(msg_builder.build())
+                client.send(bdl_builder.build())
             except KeyError as e:
                 print(e)
