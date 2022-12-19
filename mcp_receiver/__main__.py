@@ -1,13 +1,9 @@
 from .receiver  import Receiver
-#from .vmcsender import VMCSender
-#from .dummyreceiver  import DummyReceiver
-from .dumper import ScreenDumper
+from .vmcsender import VMCSender
 import queue
 
 q = queue.Queue()
 recv = Receiver()
-#send = VMCSender()
-#recv = DummyReceiver()
-send = ScreenDumper()
+send = VMCSender()
 recv.run(q)
 send.run(q)
