@@ -1,4 +1,4 @@
-import pythonosc
+from pythonosc import udp_client
 from mcp_receiver.runner import Runner
 
 bone_map = [
@@ -37,7 +37,7 @@ class VMCSender(Runner):
         self.port = port
 
     def loop(self):
-        client = pythonosc.udp_client.SimpleUDPClient(host, port)
+        client = udp_client.SimpleUDPClient(self.host, self.port)
         # Do some initialization here
         pass
 

@@ -17,6 +17,5 @@ class DummyReceiver(Runner):
                     "btrs": [{
                         "bnid": i,
                         "tran": (0, 0, 0, 0, 0, 0, 0)} for i in range(0, 27)]}}
-            data = self.queue.put(data)
-            print(data)
+            self.queue.put(data)
             time.sleep(1)
