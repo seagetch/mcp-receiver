@@ -3,8 +3,8 @@ from mcp_receiver.runner import Runner
 
 bone_map = [
     "Hips", #0
-    "Spine", #2
-    None, #1
+    "Spine", #1
+    None, #2
     "Chest", #3
     None, #4
     "UpperChest", #5
