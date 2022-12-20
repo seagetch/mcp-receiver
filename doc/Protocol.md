@@ -22,9 +22,12 @@ If user want to send tracking data of multiple player, it should send tracking d
 
 
 ## Communication between Sender and Receiver
-**[Need confirmation]**
-
 Mobile app continues to send updated motion to specified port. No interactive communication is required. Just one-way stream from mobile app to computer.
+
+![sequence](seq.png)
+
+Mobile app sends `skdf` packet at the beginning of the connection.
+Then it continues sending sequence of `fram` packet when sensor get new value (need confirmation.)
 
 ## Serialization Format
 Data sent from mobile app is serialized in special serialization format.
@@ -108,8 +111,10 @@ Packet contains `head`, `sndf` and `fram` fields, and contains several sub-field
 - `tran` specifies the transformation parameter values. It seems to contain 7 floating values. 
 
 ## Bone Transformation Definition
-Not yet done
+`tran` field contains 7 floating values. By examining the values sending VMC Performer, we figured out the meaning of the values:
 
-`tran` field contains 7 floating values.
-By comparing values with BVH files, it seems (rot.x, rot.y, rot.z, rot.w, pos.x, pos.y, pos.z)
-but not confirmed yet.
+![tran](tran-structure.png)
+
+- `rotation` represents the local rotation value of the bone. That means value of `rotation` is relative to angles of parent bone.
+  `rotation` is expressed in quaternion angle. It contains four elements (x, y, z, w)
+- `position` represents the local position value of the bone. That means value of `position` is relative to position of parent bone.
