@@ -5,6 +5,27 @@
 
 This document describes the estimated protocol between mocopi mobile application and Receiver Plugin running on the PC.
 
+- [Protocol Specification](#protocol-specification)
+  - [Overview](#overview)
+  - [Communication between Sender and Receiver](#communication-between-sender-and-receiver)
+  - [Serialization Format](#serialization-format)
+    - [Basic Field Structure](#basic-field-structure)
+    - [Nested Field Structure](#nested-field-structure)
+  - [Data Structure](#data-structure)
+    - [`skdf` Packet Structure](#skdf-packet-structure)
+      - [`head` field](#head-field)
+      - [`sndf` field](#sndf-field)
+      - [`skdf` field](#skdf-field)
+      - [`bons` field](#bons-field)
+      - [`bndt` field](#bndt-field)
+    - [`fram` Packet Structure](#fram-packet-structure)
+      - [`head` field](#head-field-1)
+      - [`sndf` field](#sndf-field-1)
+      - [`fram` field](#fram-field)
+      - [`btrs` field](#btrs-field)
+      - [`btdt` field](#btdt-field)
+    - [Bone Transformation Definition in `tran` field](#bone-transformation-definition-in-tran-field)
+
 
 ## Overview
 Figure below shows the overview of the communication between mobile app and Computer.
@@ -110,7 +131,7 @@ Packet contains `head`, `sndf` and `fram` fields, and contains several sub-field
   For more details of Bone ID, you can consult [Technical Specification](https://www.sony.net/Products/mocopi-dev/jp/documents/Home/TechSpec.html) of mocopi developer's site.
 - `tran` specifies the transformation parameter values. It seems to contain 7 floating values. 
 
-## Bone Transformation Definition
+### Bone Transformation Definition in `tran` field
 `tran` field contains 7 floating values. By examining the values sending VMC Performer, we figured out the meaning of the values:
 
 ![tran](tran-structure.png)
