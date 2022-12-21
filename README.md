@@ -12,4 +12,4 @@ Execute test application by following command.
 ```
 python3 -m mcp_receiver
 ```
-This command dumps data structure into screen.
+This command listens on port 12351, receiving packets from mocopi mobile app (and BVHSender), and then send VMC Protocol packets to localhost:39540.
