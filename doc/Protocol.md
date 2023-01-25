@@ -48,6 +48,9 @@ Mobile app continues to send updated motion to specified port. No interactive co
 ![sequence](seq.png)
 
 Mobile app sends `skdf` packet at the beginning of the connection.
+It contains default definition of skeleton parameters of bones with T-pose.
+Mobile app seems to send `skdf` packet periodically in every few seconds.
+
 Then it continues sending sequence of `fram` packet when sensor get new value (need confirmation.)
 
 ## Serialization Format
