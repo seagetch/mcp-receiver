@@ -108,6 +108,9 @@ Packet contains `head`, `sndf` and `skdf` fields, and contains several sub-field
 `fram` packet is sent continuously after first `skdf` packet is sent.
 Packet contains `head`, `sndf` and `fram` fields, and contains several sub-fields inside.
 
+**Note**
+**Since July 2023, a system time (UnixTime) has been added to the mocopi data format (refer to: [mocopi SDK Download](https://www.sony.net/Products/mocopi-dev/en/downloads/DownloadInfo.html)). After the `time`, it is necessary to add `uttm`, an 8-byte little-endian floating-point number in the `fram` field. This represents the Unix time in seconds.**
+
 ![fields](fram-structure.png)
 #### `head` field
 `head` field contains information about packet format and version.
