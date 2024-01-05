@@ -1,3 +1,5 @@
+import queue
+import time
 from pythonosc import udp_client, osc_bundle_builder, osc_message_builder
 from mcp_receiver.runner import Runner
 
@@ -42,9 +44,9 @@ class VMCSender(Runner):
         pass
 
         # Main loop
-        while True:
+        while self.is_running:
             try:
-                data = self.queue.get()
+                data = self.queue.get_nowait()
                 if "skdf" in data:
                     msg_builder = osc_message_builder.OscMessageBuilder("/VMC/Ext/Root/Pos")
                     tran = data["skdf"]["bons"][0]["tran"]
@@ -95,5 +97,7 @@ class VMCSender(Runner):
                             skipped_pos = [skipped_pos[0] + tran[4], skipped_pos[1] + tran[5], skipped_pos[2] + tran[6]]
                             skipped_rot = [skipped_rot[0] * tran[0], skipped_rot[1] * tran[1], skipped_rot[2] * tran[2], skipped_rot[3] * tran[3]]
                     client.send(bdl_builder.build())
+            except queue.Empty:
+                time.sleep(0.1)
             except KeyError as e:
                 print(e)
