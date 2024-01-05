@@ -1,5 +1,6 @@
 import socket
 import struct
+from datetime import datetime
 from mcp_receiver.runner import Runner
 
 def is_field(name):
@@ -39,6 +40,8 @@ def _process_packet(message):
     elif "fram" in data:
         data["fram"]["fnum"] = struct.unpack("@I", data["fram"]["fnum"])[0]
         data["fram"]["time"] = struct.unpack("@I", data["fram"]["time"])[0]
+        if "uttm" in data["fram"]:
+            data["fram"]["uttm"] = datetime.utcfromtimestamp(struct.unpack("<d", data["fram"]["uttm"])[0])
         for item in data["fram"]["btrs"]:
             item["bnid"] = struct.unpack("@H", item["bnid"])[0]
             item["tran"] = struct.unpack("@fffffff", item["tran"])
@@ -53,10 +56,16 @@ class Receiver(Runner):
     def loop(self):
         self.socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.socket.bind((self.addr, self.port))
-        while True:
+        self.socket.settimeout(1)
+
+        while self.is_running:
             try:
                 message, client_addr = self.socket.recvfrom(2048)
                 data = _process_packet(message)
                 self.queue.put(data)
+            except socket.timeout:
+                pass
             except KeyError as e:
                 print(e)
+        
+        self.socket.close()
