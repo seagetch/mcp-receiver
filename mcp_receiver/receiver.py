@@ -26,7 +26,7 @@ def _deserialize(data, index, length, is_list = False):
     else:
         return result, index
 
-def _process_packet(message, unix_support = False):
+def _process_packet(message):
     data = _deserialize(message, 0, len(message), False)[0]
     data["head"]["ftyp"] = data["head"]["ftyp"].decode()
     data["head"]["vrsn"] = ord(data["head"]["vrsn"])
@@ -40,7 +40,7 @@ def _process_packet(message, unix_support = False):
     elif "fram" in data:
         data["fram"]["fnum"] = struct.unpack("@I", data["fram"]["fnum"])[0]
         data["fram"]["time"] = struct.unpack("@I", data["fram"]["time"])[0]
-        if unix_support:
+        if "uttm" in data["fram"]:
             data["fram"]["uttm"] = datetime.utcfromtimestamp(struct.unpack("<d", data["fram"]["uttm"])[0])
         for item in data["fram"]["btrs"]:
             item["bnid"] = struct.unpack("@H", item["bnid"])[0]
@@ -49,10 +49,9 @@ def _process_packet(message, unix_support = False):
 
 
 class Receiver(Runner):
-    def __init__(self, addr = "localhost", port = 12351, unix_support = False):
+    def __init__(self, addr = "localhost", port = 12351):
         self.addr = addr
         self.port = port
-        self.unix_support = unix_support
 
     def loop(self):
         self.socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -62,7 +61,7 @@ class Receiver(Runner):
         while self.is_running:
             try:
                 message, client_addr = self.socket.recvfrom(2048)
-                data = _process_packet(message, unix_support=self.unix_support)
+                data = _process_packet(message)
                 self.queue.put(data)
             except socket.timeout:
                 pass
